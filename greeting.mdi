@@ -1,0 +1,21 @@
+Greeting -> GREETING' COMPUTER? : greeting(GREETING').
+
+GREETING -> HELLO : hello.
+GREETING -> GOODBYE : goodbye.
+
+HELLO -> hello.
+HELLO -> hi.
+HELLO -> good morning.
+HELLO -> good afternoon.
+HELLO -> good evening.
+HELLO -> hey.
+HELLO -> how are you.
+HELLO -> ok.
+
+GOODBYE -> bye.
+GOODBYE -> goodbye.
+GOODBYE -> good bye.
+GOODBYE -> good night.
+GOODBYE -> goodnight.
+GOODBYE -> so long.
+GOODBYE -> farewell.

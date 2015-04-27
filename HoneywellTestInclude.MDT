@@ -1,0 +1,681 @@
+/* Comments go between slash asterisk */
+StartState -> S' : S'.
+StartState -> S' AND? S'' : compound(S', S'').
+StartState -> S' AND? S'' AND? S''' : compound(S', S'',S''').
+ 
+S -> POLITE? S2' : S2'.
+S -> S2' POLITE? : S2'.
+ 
+S2 -> Question' : Question'.
+S2 -> Statement' : Statement'.
+S2 -> IWANT? Command' : Command'.
+S2 -> YesNoReply' : YesNoReply'.
+S2 -> Confirmation' : Confirmation'.
+S2 -> Greeting' : Greeting'.
+
+#include greeting.mdi
+Greeting -> GREETING' COMPUTER? : greeting(GREETING').
+ 
+GREETING -> HELLO : hello.
+GREETING -> GOODBYE : goodbye.
+ 
+HELLO -> hello.
+HELLO -> hi.
+HELLO -> good morning.
+HELLO -> good afternoon.
+HELLO -> good evening.
+HELLO -> hey.
+HELLO -> how are you.
+HELLO -> ok.
+ 
+GOODBYE -> bye.
+GOODBYE -> goodbye.
+GOODBYE -> good bye.
+GOODBYE -> good night.
+GOODBYE -> goodnight.
+GOODBYE -> so long.
+GOODBYE -> farewell.
+ 
+COMPUTER -> computer.
+COMPUTER -> tuxedo.
+COMPUTER -> tux.
+ 
+POLITE -> PLEASE.
+POLITE -> THANKS.
+POLITE -> PLEASE THANKS.
+ 
+PLEASE -> please.
+ 
+THANKS -> thanks MUCH?.
+THANKS -> thank you MUCH?.
+ 
+MUCH -> much.
+MUCH -> very much.
+ 
+Confirmation -> YES COMPUTER? : statement(confirmed).
+Confirmation -> NO COMPUTER? : statement(not_confirmed).
+ 
+YesNoReply -> YES : statement(affirmative).
+YesNoReply -> NO : statement(negative).
+ 
+YES -> yes.
+YES -> yeah.
+YES -> uh huh.
+YES -> affirmative.
+YES -> ok.
+YES -> okay.
+YES -> o k.
+YES -> POLITE.
+YES -> confirm.
+ 
+NO -> no.
+NO -> negative.
+NO -> uh uh.
+NO -> no way.
+NO -> i dont think so.
+ 
+AND -> and.
+AND -> also.
+ 
+/* Name grammars */
+Question -> QNAME' : QNAME'.
+Question -> OTHER_ISSUE' ISHOULDKNOW? : question(OTHER_ISSUE').
+Question -> QUERY_TEMPERATURE' : question(QUERY_TEMPERATURE').
+Question -> QUERY_ALARM' : question(QUERY_ALARM').
+Question -> QUERY_WINDOWS' : question(QUERY_WINDOWS').
+Question -> QUERY_MESSAGES' : question(QUERY_MESSAGES').
+ 
+Statement -> SNAME' : SNAME'.
+Statement -> OCCUPANCY_STATUS' : statement(OCCUPANCY_STATUS').
+Statement -> TO_BED' : TO_BED'.
+ 
+QNAME -> what is your name : question(name).
+ 
+SNAME -> MYNAMEIS NAME' : statement(name(NAME')).
+SNAME -> NAME' : statement(name(NAME')).
+ 
+MYNAMEIS -> my name is.
+MYNAMEIS -> this is.
+MYNAMEIS -> i am called.
+MYNAMEIS -> you can call me.
+ 
+NAME -> curry : curry.
+NAME -> bill : bill.
+NAME -> jennifer : jennifer.
+NAME -> tom : tom.
+NAME -> william : william.
+NAME -> henry : henry.
+NAME -> deb : deb.
+NAME -> virginia : virginia.
+ 
+/* Lights */
+Command -> LIGHT_COMMAND' : LIGHT_COMMAND'.
+Command -> SETTEMP' : SETTEMP'.
+Command -> ALARM_COMMAND' : ALARM_COMMAND'.
+Command -> SAVEMESSAGE' : SAVEMESSAGE'.
+Command -> RETRIEVEMESSAGE' : RETRIEVEMESSAGE'.
+Command -> BYPASS_SENSOR' : command(BYPASS_SENSOR').
+ 
+LIGHT_COMMAND -> TURNON' : TURNON'.
+LIGHT_COMMAND -> TURNOFF' : TURNOFF'.
+LIGHT_COMMAND -> SETLIGHTSTATE' : SETLIGHTSTATE'.
+ 
+TURNON -> TURN? ON WHICHLIGHT' : command(turn_on(WHICHLIGHT')).
+TURNON -> TURN?  WHICHLIGHT' ON : command(turn_on(WHICHLIGHT')).
+ 
+TURNOFF -> TURN? OFF WHICHLIGHT' : command(turn_off(WHICHLIGHT')).
+TURNOFF -> TURN?  WHICHLIGHT' OFF : command(turn_off(WHICHLIGHT')).
+ 
+SETLIGHTSTATE -> TURN_ON LIGHTSTATE' LIGHT? : command(set_light_state(LIGHTSTATE')).
+SETLIGHTSTATE -> TURN_ON LIGHT FOR LIGHTSTATE' : command(set_light_state(LIGHTSTATE')).
+SETLIGHTSTATE -> TURN_ON LIGHT : command(set_light_state(unknown_dayzone(unknown_mod))).
+ 
+TURN_ON -> TURN ON.
+TURN_ON -> set.
+ 
+LIGHTSTATE -> THE? DAYZONE_MODIFIER' DAYZONE' : DAYZONE'(DAYZONE_MODIFIER').
+LIGHTSTATE -> THE? DAYZONE' : DAYZONE'(*).
+LIGHTSTATE -> THE? DAYZONE_MODIFIER' : unknown_dayzone(DAYZONE_MODIFIER').
+ 
+DAYZONE -> morning : morning.
+DAYZONE -> dawn : dawn.
+DAYZONE -> noon : noon.
+DAYZONE -> afternoon : afternoon.
+DAYZONE -> evening : evening.
+DAYZONE -> night : night.
+DAYZONE -> nighttime : night.
+DAYZONE -> daytime : day.
+DAYZONE -> day : day.
+ 
+DAYZONE_MODIFIER -> early : early.
+DAYZONE_MODIFIER -> normal : normal.
+DAYZONE_MODIFIER -> late : late.
+ 
+ON -> on.
+ 
+OFF -> off.
+OFF -> out.
+ 
+TURN -> turn.
+TURN -> make.
+TURN -> put.
+TURN -> set.
+TURN -> adjust.
+TURN -> change.
+ 
+WHICHLIGHT -> ROOM' LIGHT' : (LIGHT', location(ROOM')).
+WHICHLIGHT -> LIGHT' IN? ROOM' : (LIGHT', location(ROOM')).
+WHICHLIGHT -> LIGHT' : (LIGHT', location(*)).
+ 
+ROOM -> the? RM' : RM'.
+ 
+RM -> bedroom : bedroom.
+RM -> bed room : bedroom.
+RM -> kitchen : kitchen.
+RM -> living room : living_room.
+RM -> upstairs : upstairs.
+RM -> second floor : upstairs.
+RM -> first floor : downstairs.
+RM -> downstairs : downstairs.
+ 
+LIGHT -> THE? light : light.
+LIGHT -> THE? lights : light.
+LIGHT -> it : *.
+LIGHT -> them : *.
+LIGHT -> they : *.
+ 
+IN -> in.
+IN -> in.
+ 
+/* Set the temperature */
+
+SETTEMP -> SET? TEMP' : command(TEMP').
+SETTEMP -> SET? TEMP' and? TEMP'' : compound(command(TEMP'), command(TEMP'')).
+ 
+SET -> TURN.
+SET -> adjust.
+ 
+TEMP -> THE? TEMPERATURE' to? DEGREES' : setState(TEMPERATURE', degrees(DEGREES'), location(all)).
+TEMP -> THE? TEMPERATURE' to? DEGREES' UPDOWNSTAIRS' : setState(TEMPERATURE', degrees(DEGREES'), location(UPDOWNSTAIRS')).
+TEMP -> to? DEGREES' UPDOWNSTAIRS' : setState(temperature, degrees(DEGREES'), location(UPDOWNSTAIRS').
+TEMP -> THE? TEMPERATURE' UPDOWNSTAIRS' to? DEGREES' : setState(TEMPERATURE', degrees(DEGREES'), location(UPDOWNSTAIRS')).
+TEMP -> to? DEGREES' UPDOWNSTAIRS' : setState(tempeature, degrees(DEGREES'), location(UPDOWNSTAIRS').
+TEMP -> THE? UPDOWNSTAIRS' TEMPERATURE'  to? DEGREES' : setState(TEMPERATURE', degrees(DEGREES'), location(UPDOWNSTAIRS')).
+TEMP -> UPDOWNSTAIRS' to? DEGREES' : setState(temperature, degrees(DEGREES'), location(UPDOWNSTAIRS').
+TEMP -> THE? TEMPERATURE' UP_OR_DOWN' : setState(TEMPERATURE', degrees(UP_OR_DOWN'), location(all)).
+TEMP -> THE? TEMPERATURE' UP_OR_DOWN' UPDOWNSTAIRS' : setState(TEMPERATURE', degrees(UP_OR_DOWN'), location(UPDOWNSTAIRS')).
+TEMP -> THE? UPDOWNSTAIRS' TEMPERATURE' UP_OR_DOWN' : setState(TEMPERATURE', degrees(UP_OR_DOWN'), location(UPDOWNSTAIRS')).
+TEMP -> THE? TEMPERATURE' UP? DOWN? UPDOWNSTAIRS' UP_OR_DOWN' : setState(TEMPERATURE', degrees(UP_OR_DOWN'), location(UPDOWNSTAIRS')).
+TEMP -> THE? UPDOWNSTAIRS' TEMPERATURE'  UP_OR_DOWN' : setState(TEMPERATURE', degrees(UP_OR_DOWN'), location(UPDOWNSTAIRS')).
+TEMP -> RAISE THE? TEMPERATURE' : setState(TEMPERATURE', degrees(up(unspecified)), location(all)).
+TEMP -> RAISE THE? UPDOWNSTAIRS' TEMPERATURE' : setState(TEMPERATURE', degrees(up(unspecified)), location(UPDOWNSTAIRS')).
+TEMP -> RAISE THE? TEMPERATURE UPDOWNSTAIRS' : setState(temperature, degrees(up(unspecified)), location(UPDOWNSTAIRS')).
+TEMP -> RAISE THE? TEMPERATURE' by? DEGREES' : setState(TEMPERATURE', degrees(up(DEGREES')), location(all)).
+TEMP -> RAISE THE? UPDOWNSTAIRS' TEMPERATURE' by? DEGREES' : setState(TEMPERATURE', degrees(up(DEGREES')), location(UPDOWNSTAIRS')).
+TEMP -> RAISE THE? TEMPERATURE UPDOWNSTAIRS'  by? DEGREES' : setState(temperature, degrees(up(DEGREES')), location(UPDOWNSTAIRS')).
+TEMP -> RAISE THE? TEMPERATURE by? DEGREES' UPDOWNSTAIRS' : setState(temperature, degrees(up(DEGREES')), location(UPDOWNSTAIRS')).
+ 
+/*TEMP -> to? DEGREES' : setState(*, degrees(DEGREES'), location(all) .*/
+
+/* turn heat up or down  */
+UPDOWNSTAIRS -> upstairs : upstairs.
+UPDOWNSTAIRS -> up stairs : upstairs.
+UPDOWNSTAIRS -> downstairs : downstairs.
+UPDOWNSTAIRS -> down stairs : downstairs.
+ 
+TEMPERATURE -> temperature : temperature.
+TEMPERATURE -> thermostat : temperature.
+TEMPERATURE -> heat : heat.
+TEMPERATURE -> ac : airconditioning.
+TEMPERATURE -> a c : airconditioning.
+TEMPERATURE -> system : temperature.
+TEMPERATURE -> temp : temperature.
+TEMPERATURE -> it : *.
+ 
+UP_OR_DOWN -> UP : up(unspecified).
+UP_OR_DOWN -> UP by? DEGREES' : up(DEGREES').
+UP_OR_DOWN -> DOWN : up(unspecified).
+UP_OR_DOWN -> DOWN by? DEGREES' : up(DEGREES').
+ 
+UP -> up.
+UP -> higher.
+UP -> raise.
+ 
+DOWN -> down.
+DOWN -> lower.
+DOWN -> reduce.
+ 
+RAISE -> raise.
+RAISE -> increase.
+RAISE -> go up.
+ 
+LOWER -> lower.
+LOWER -> decrease.
+LOWER -> go down.
+ 
+DEGREES -> NUMBER' degrees? farenheit? : NUMBER'.
+ 
+NUMBER -> DIGIT' : (DIGIT').
+NUMBER -> DIGIT' DIGIT'' : (DIGIT',DIGIT'').
+NUMBER -> TEENS' : (TEENS').
+NUMBER -> TENS' : (TENS').
+NUMBER -> TENS' DIGIT' : (TENS',DIGIT').
+NUMBER -> HUNDRED' : (HUNDRED').
+NUMBER -> HUNDRED' NUMBER' : (HUNDRED',NUMBER').
+NUMBER -> COUPLE.
+ 
+COUPLE -> a? FEW.
+ 
+FEW -> few.
+FEW -> couple.
+FEW -> one or two.
+FEW -> few.
+FEW -> couple of?.
+FEW -> some.
+FEW -> one or two.
+ 
+/* Notice the space between the numerical digit and the period */
+DIGIT -> one! : 1.
+DIGIT -> a : 1.
+DIGIT -> two! : 2.
+DIGIT -> three! : 3.
+DIGIT -> four! : 4.
+DIGIT -> five! : 5.
+DIGIT -> six! : 6.
+DIGIT -> seven! : 7.
+DIGIT -> eight! : 8.
+DIGIT -> nine! : 9.
+DIGIT -> zero! : 0.
+ 
+TEENS -> ten! : 10.
+TEENS -> eleven! : 11.
+TEENS -> twelve! : 12.
+TEENS -> thirteen! : 13.
+TEENS -> fourteen! : 14.
+TEENS -> fifteen! : 15.
+TEENS -> sixteen! : 16.
+TEENS -> seventeen! : 17.
+TEENS -> eighteen! : 18.
+TEENS -> nineteen! : 19.
+ 
+TENS -> twenty! : 20.
+TENS -> thirty! : 30.
+TENS -> forty! : 40.
+TENS -> fifty! : 50.
+TENS -> sixty! : 60.
+TENS -> seventy! : 70.
+TENS -> eighty! : 80.
+TENS -> ninety! : 90.
+ 
+HUNDRED -> one? hundred! : 100.
+ 
+/* alarm setting */
+
+ALARM_COMMAND -> TURNON_ALARM' : TURNON_ALARM'.
+ALARM_COMMAND -> TURNOFF_ALARM' : TURNOFF_ALARM'.
+ 
+TURNON_ALARM -> TURN? ON WHICHALARM' : command(arm(WHICHALARM')).
+TURNON_ALARM -> do not DISARM WHICHALARM' : command(arm(WHICHALARM')).
+TURNON_ALARM -> TURN?  WHICHALARM' ON : command(arm(WHICHALARM')).
+TURNON_ALARM -> TURN?  ALARM' ON ZONE' : command(arm(ALARM', ZONE')).
+TURNON_ALARM -> ARM  WHICHALARM' : command(arm(WHICHALARM')).
+TURNON_ALARM -> ARM SETTING' : command(arm(alarm, setting(SETTING')).
+ 
+TURNOFF_ALARM -> do not ARM WHICHALARM' : command(disarm(WHICHALARM')).
+TURNOFF_ALARM -> TURN? OFF WHICHALARM' : command(disarm(WHICHALARM')).
+TURNOFF_ALARM -> TURN?  WHICHALARM' OFF : command(disarm(WHICHALARM')).
+TURNOFF_ALARM -> DISARM  WHICHALARM' : command(disarm(WHICHALARM')).
+TURNOFF_ALARM -> DISARM SETTING' : command(disarm(alarm, setting(SETTING')).
+ 
+SETTING -> stay : stay.
+SETTING -> away : away.
+ 
+WHICHALARM -> THE? ZONE' ALARM' : (ALARM', location(ZONE')).
+WHICHALARM -> THE? ZONE' : (alarm, location(ZONE')).
+WHICHALARM -> ALARM' IN? THE? ZONE' : (ALARM', location(ZONE')).
+WHICHALARM -> ALARM' : (ALARM', location(*)).
+ 
+ARM -> arm.
+ARM -> activate.
+ 
+DISARM -> disarm.
+DISARM -> deactivate.
+DISARM -> ignore.
+ 
+ALARM -> the? alarm : alarm.
+ALARM -> the? alarms : alarm.
+ALARM -> the? security system? : alarm.
+ALARM -> the? system : alarm.
+ALARM -> it : *.
+ALARM -> they : *.
+ALARM -> them : *.
+ 
+THE -> the.
+THE -> that.
+THE -> those.
+ 
+ZONE -> ZONE_LOC' ZONE_WORD' : (ZONE_LOC', ZONE_WORD').
+ZONE -> ZONE_LOC' : (ZONE_LOC', *).
+ZONE -> ZONE_WORD' : (*, ZONE_WORD').
+ 
+ZONE_WORD -> zone : zone.
+ZONE_WORD -> zones : zone.
+ZONE_WORD -> area : zone.
+ZONE_WORD -> areas : zone.
+ZONE_WORD -> sensor : sensor.
+ZONE_WORD -> sensors : sensor.
+ZONE_WORD -> there : *.
+ZONE_WORD -> here : *.
+ZONE_WORD -> OPEN? windows : windows.
+ZONE_WORD -> OPEN? window : windows.
+ZONE_WORD -> OPEN? doors : doors.
+ZONE_WORD -> OPEN? door : doors.
+ 
+ZONE_LOC -> downstairs : downstairs.
+ZONE_LOC -> upstairs : upstairs.
+ZONE_LOC -> house : house.
+ZONE_LOC -> exterior : exterior.
+ZONE_LOC -> outside : exterior.
+ZONE_LOC -> interior : interior.
+ZONE_LOC -> inside : interior.
+ZONE_LOC -> garage : garage.
+ZONE_LOC -> basement : basement.
+ZONE_LOC -> RM' : RM'.
+ 
+OCCUPANCY_STATUS -> ARRIVING' : ARRIVING'.
+OCCUPANCY_STATUS -> STAYING' : STAYING'.
+OCCUPANCY_STATUS -> DEPARTING' : DEPARTING'.
+OCCUPANCY_STATUS -> AWAY' : AWAY'.
+OCCUPANCY_STATUS -> RETURNING' : RETURNING'.
+ 
+ARRIVING -> WE' ARE HOME NOW? : arriving(WE').
+ 
+WE -> i : i.
+WE -> we : we.
+ 
+ARE -> are.
+ARE -> is.
+ARE -> am.
+ARE -> will be.
+ 
+HOME -> home.
+HOME -> here.
+ 
+NOW -> right? now.
+ 
+STAYING -> WE' ARE REMAINING? HOME? FOR! DURATION' : staying(WE', for(DURATION')).
+STAYING -> WE' ARE REMAINING? HOME? UNTIL! DURATION' : staying(WE', until(DURATION')).
+ 
+REMAINING -> remaining.
+REMAINING -> staying.
+ 
+FOR -> for.
+ 
+UNTIL -> until.
+UNTIL -> til.
+UNTIL -> to.
+ 
+DURATION -> NOW : duration(now).
+DURATION -> NUMBER' hours : duration(NUMBER', hours).
+DURATION -> a? FEW HOURS_DAYS' : duration(few, HOURS_DAYS').
+DURATION -> NUMBER' HOURS_DAYS' : duration(NUMBER', HOURS_DAYS').
+DURATION -> TIME_OF_DAY_MODIFIER' TIME_OF_DAY' : duration(TIME_OF_DAY_MODIFIER', TIME_OF_DAY').
+DURATION -> TIME_OF_DAY' : duration(specific, TIME_OF_DAY').
+ 
+TIME_OF_DAY_MODIFIER -> all : all.
+TIME_OF_DAY_MODIFIER -> THIS : this.
+TIME_OF_DAY_MODIFIER -> tomorrow : tomorrow.
+ 
+HOURS_DAYS -> hours : hours.
+HOURS_DAYS -> days : days.
+ 
+TIME_OF_DAY -> day : day.
+TIME_OF_DAY -> night : night.
+TIME_OF_DAY -> morning : morning.
+TIME_OF_DAY -> afternoon : afternoon.
+TIME_OF_DAY -> evening : evening.
+TIME_OF_DAY -> tonight : tonight.
+TIME_OF_DAY -> midnight : midnight.
+TIME_OF_DAY -> noon : noon.
+TIME_OF_DAY -> NUMBER' o clock : oclock(NUMBER', am_pm(*)).
+TIME_OF_DAY -> NUMBER' : oclock(NUMBER', am_pm(*)).
+TIME_OF_DAY -> NUMBER' NUMBER'' : oclock((NUMBER', NUMBER''), am_pm(*)).
+TIME_OF_DAY -> NUMBER' o clock AM_PM' : oclock(NUMBER', am_pm(AM_PM')).
+TIME_OF_DAY -> NUMBER'  AM_PM' : oclock(NUMBER', am_pm(AM_PM')).
+TIME_OF_DAY -> NUMBER' NUMBER'' AM_PM' : oclock((NUMBER', NUMBER''), am_pm(AM_PM')).
+TIME_OF_DAY -> AM_PM' at? NUMBER' o clock : oclock(NUMBER', am_pm(AM_PM')).
+TIME_OF_DAY -> AM_PM' at? NUMBER' : oclock(NUMBER', am_pm(AM_PM')).
+TIME_OF_DAY -> AM_PM' at? NUMBER' NUMBER'' : oclock((NUMBER', NUMBER''), am_pm(AM_PM')).
+ 
+THIS -> this.
+THIS -> the.
+ 
+DEPARTING -> LEAVING! now? : departing(*, now).
+DEPARTING -> WE' ARE LEAVING! now? : departing(WE', now).
+DEPARTING -> WE' ARE LEAVING! HOME? AT? DURATION' : departing(WE', at(DURATION')).
+DEPARTING -> WE' ARE LEAVING! HOME? FOR! DURATION' : departing(WE', for(DURATION')).
+ 
+LEAVING -> leaving.
+LEAVING -> leave.
+LEAVING -> going.
+LEAVING -> go.
+LEAVING -> departing.
+LEAVING -> depart.
+ 
+AT -> at.
+AT -> in.
+ 
+AM_PM -> am : am.
+AM_PM -> IN_THE? morning : am.
+AM_PM -> a m : am.
+AM_PM -> pm : pm.
+AM_PM -> IN_THE? afternoon : pm.
+AM_PM -> IN_THE? evening : pm.
+AM_PM -> tonight : pm.
+AM_PM -> p m : pm.
+ 
+IN_THE -> IN? THE?.
+ 
+RETURNING -> COMING_BACK! now? : returning(*, now).
+RETURNING -> WE' ARE COMING_BACK! HOME? AT? DURATION' : returning(WE', at(DURATION')).
+RETURNING -> WE' ARE back? HOME? AT? DURATION' : returning(WE', at(DURATION')).
+ 
+COMING_BACK -> coming back?.
+COMING_BACK -> come back?.
+COMING_BACK -> returning.
+COMING_BACK -> return.
+ 
+AWAY -> WE' ARE AWAY! from? HOME? FOR? DURATION' : away(WE', for(DURATION')).
+AWAY -> WE' ARE AWAY! from? HOME? UNTIL DURATION' : away(WE', until(DURATION')).
+AWAY -> away.
+AWAY -> gone.
+AWAY -> going away.
+AWAY -> staying away.
+AWAY -> out.
+ 
+/* description of activities */
+TO_BED -> GOING_TO_BED! now? : state(going_to_bed(*, now)).
+TO_BED -> WE' GOING_TO_BED! now? : state(going_to_bed(WE', now)).
+TO_BED -> WE' GOING_TO_BED! UNTIL! DURATION' : state(going_to_bed(WE', until(DURATION'))).
+TO_BED -> WE' GOING_TO_BED! FOR! DURATION' : state(going_to_bed(WE', for(DURATION'))).
+TO_BED -> WE' GOING_TO_BED! AT! DURATION' : state(going_to_bed(WE', at(DURATION'))).
+ 
+GOING_TO_BED -> ARE? going to BED.
+GOING_TO_BED -> ARE? getting in BED.
+ 
+BED -> bed.
+BED -> sleep.
+ 
+/* Save message for */
+SAVEMESSAGE -> TELL_NAME' that? Statement' : leave_message(for(TELL_NAME'), Statement').
+ 
+TELL_NAME -> TELL NAME' : NAME'.
+TELL_NAME -> let NAME' know : NAME'.
+TELL_NAME -> TELL MESSAGE FOR_TO NAME' : NAME'.
+TELL_NAME -> TELL NAME' MESSAGE : NAME'.
+ 
+TELL -> tell.
+TELL -> inform.
+TELL -> leave.
+TELL -> give.
+ 
+FOR_TO -> for.
+FOR_TO -> to.
+ 
+MESSAGE -> a? NOTE.
+ 
+NOTE -> message.
+NOTE -> note.
+ 
+/* Retrieve messages */
+/*RETRIEVEMESSAGE -> PLAY MY MESSAGES : playback(messages(from(all), quantity(all))).*/
+RETRIEVEMESSAGE -> PLAY WHICHONES' : playback(WHICHONES').
+ 
+PLAY -> play back?.
+PLAY -> repeat.
+PLAY -> retrieve.
+PLAY -> let me hear.
+ 
+WHICHONES -> my messages : playback(messages(from(all), quantity(all))).
+WHICHONES -> ALL' MESSAGES FORME? : messages(from(all), quantity(ALL')).
+WHICHONES -> ALL' MESSAGES FORME? FROM_PERSON' FORME? : messages(from(FROM_PERSON'), quantity(ALL')).
+WHICHONES -> ALL' of? NAME' s MESSAGES FORME? FORME? : messages(from(NAME'), quantity(ALL')).
+ 
+ALL -> all MY? : all.
+ALL -> MY : all.
+ALL -> the last : last.
+ALL -> the previous : previous.
+ 
+MY -> my.
+MY -> the.
+ 
+FROM_PERSON -> from NAME' : NAME'.
+ 
+FORME -> FOR me.
+ 
+MESSAGES -> messages.
+MESSAGES -> message.
+MESSAGES -> notes.
+MESSAGES -> memos.
+ 
+OTHER_ISSUE -> anything else : other_issues.
+OTHER_ISSUE -> any other THINGS : other_issues.
+ 
+THINGS -> things.
+THINGS -> issues.
+THINGS -> events.
+ 
+ISHOULDKNOW -> i SHOULD KNOW.
+ 
+SHOULD -> should.
+SHOULD -> need to.
+ 
+KNOW -> know.
+KNOW -> be aware of.
+KNOW -> hear.
+ 
+QUERY_TEMPERATURE -> what ARE the? TEMPERATURE in? ZONE' SETTO? : temperature(zone(ZONE')).
+QUERY_TEMPERATURE -> what ARE the? TEMPERATURE SETTO? in? ZONE' : temperature(zone(ZONE')).
+QUERY_TEMPERATURE -> what ARE the? ZONE' TEMPERATURE SETTO? : temperature(zone(ZONE')).
+QUERY_TEMPERATURE -> what ARE the? TEMPERATURE SETTO? : temperature(zone(*)).
+ 
+SETTO -> set to.
+ 
+QUERY_ALARM -> what ARE the? ALARM setting? in? ZONE' SETTO? : alarm(zone(ZONE')).
+QUERY_ALARM -> what ARE the? ALARM setting? SETTO? in? ZONE' : alarm(zone(ZONE')).
+QUERY_ALARM -> what ARE the? ZONE' ALARM setting? SETTO? : alarm(zone(ZONE')).
+QUERY_ALARM -> what ARE the? ALARM setting? SETTO? : alarm(zone(*)).
+QUERY_ALARM -> ARE the? ALARM setting? in? ZONE' SETTO? ARMED_OR_DISARMED : alarm(zone(ZONE')).
+QUERY_ALARM -> ARE the? ALARM setting? SETTO? in? ZONE' ARMED_OR_DISARMED : alarm(zone(ZONE')).
+QUERY_ALARM -> ARE the? ZONE' ALARM? setting? SETTO? ARMED_OR_DISARMED : alarm(zone(ZONE')).
+QUERY_ALARM -> what ARE the? ALARM? setting? SETTO? ARMED_OR_DISARMED : alarm(zone(*)).
+ 
+ARMED -> armed : armed.
+ARMED -> on : armed.
+ 
+DISARMED -> disarmed : disarmed.
+DISARMED -> off : disarmed.
+ 
+ARMED_OR_DISARMED -> ARMED' : ARMED'.
+ARMED_OR_DISARMED -> DISARMED' : DISARMED'.
+ARMED_OR_DISARMED -> ARMED or DISARMED : armed_disarmed.
+ARMED_OR_DISARMED -> DISARMED or ARMED : armed_disarmed.
+ 
+QUERY_WINDOWS -> what ARE the? WINDOWS setting? in? ZONE' SETTO? : windows(setting, zone(ZONE')).
+QUERY_WINDOWS -> what ARE the? WINDOWS setting? SETTO? in? ZONE' : windows(setting, zone(ZONE')).
+QUERY_WINDOWS -> what ARE the? ZONE' WINDOWS setting? SETTO? : windows(setting, zone(ZONE')).
+QUERY_WINDOWS -> what ARE the? WINDOWS setting? SETTO? : windows(setting, zone(*)).
+QUERY_WINDOWS -> ARE the? WINDOWS setting? in? ZONE' SETTO? ARMED_OR_DISARMED' : windows(ARMED_OR_DISARMED', zone(ZONE')).
+QUERY_WINDOWS -> ARE the? WINDOWS setting? SETTO? in? ZONE' ARMED_OR_DISARMED' : windows(ARMED_OR_DISARMED', zone(ZONE')).
+QUERY_WINDOWS -> ARE the? ZONE' WINDOWS setting? SETTO? ARMED_OR_DISARMED' : windows(ARMED_OR_DISARMED', zone(ZONE')).
+QUERY_WINDOWS -> what ARE the? WINDOWS setting? SETTO? ARMED_OR_DISARMED' : windows(ARMED_OR_DISARMED', zone(*)).
+QUERY_WINDOWS -> ARE the? WINDOWS in? ZONE' SETTO? OPEN_CLOSE' : windows(OPEN_CLOSE', zone(ZONE')).
+QUERY_WINDOWS -> ARE the? WINDOWS SETTO? in? ZONE' OPEN_CLOSE' : windows(OPEN_CLOSE', zone(ZONE')).
+QUERY_WINDOWS -> ARE the? ZONE' WINDOWS  SETTO? OPEN_CLOSE' : windows(OPEN_CLOSE', zone(ZONE')).
+QUERY_WINDOWS -> what ARE the? WINDOWS  SETTO? OPEN_CLOSE' : windows(OPEN_CLOSE', zone(*)).
+ 
+OPEN_CLOSE -> OPEN : open.
+OPEN_CLOSE -> CLOSE : close.
+OPEN_CLOSE -> OPEN or? CLOSE : open_close.
+OPEN_CLOSE -> CLOSE or? OPEN : open_close.
+ 
+OPEN -> open.
+OPEN -> opened.
+OPEN -> up.
+OPEN -> unlocked.
+ 
+CLOSE -> close.
+CLOSE -> closed.
+CLOSE -> down.
+CLOSE -> locked.
+ 
+WINDOWS -> windows.
+WINDOWS -> window.
+ 
+QUERY_MESSAGES -> DO_I_HAVE? ANY? MESSAGES for? me? : messages(from(*), quantity(*)).
+QUERY_MESSAGES -> DO_I_HAVE? ANY? MESSAGES for? me? FROM NAME' for? me? : messages(from(NAME'), quantity(*)).
+QUERY_MESSAGES -> did NAME' LEAVE me? ANY? MESSAGES for? me? : messages(from(NAME'), quantity(*)).
+ 
+DO_I_HAVE -> do i have.
+DO_I_HAVE -> ARE there?.
+DO_I_HAVE -> have i.
+DO_I_HAVE -> did SOMEONE LEAVE for? me?.
+ 
+ANY -> any.
+ANY -> some.
+ANY -> a.
+ 
+SOMEONE -> some one.
+SOMEONE -> someone.
+SOMEONE -> anyone.
+SOMEONE -> anybody.
+SOMEONE -> any body.
+SOMEONE -> any one.
+ 
+LEAVE -> leave.
+LEAVE -> record.
+LEAVE -> give.
+LEAVE -> save.
+ 
+FROM -> from.
+ 
+/* bypass/ignore certain sensors */
+
+BYPASS -> by pass.
+BYPASS -> bypass.
+BYPASS -> ignore.
+BYPASS -> by passed.
+BYPASS -> bypassed.
+BYPASS -> ignored.
+ 
+BYPASS_SENSOR -> BYPASS THE? SENSOR' : bypass(SENSOR').
+BYPASS_SENSOR -> THE? SENSOR'  BYPASS : bypass(SENSOR').
+ 
+SENSOR -> ZONE' : ZONE'.
+ 
+IWANT -> i WANT you? to?.
+ 
+WANT -> want.
+WANT -> would like.
+WANT -> desire.
+ 
